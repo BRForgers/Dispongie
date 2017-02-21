@@ -1,0 +1,29 @@
+package me.d4rk.dispongie.data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Config {
+    public String BotToken = "BOT_TOKEN";
+    public String DiscordChannelId = "DISCORD_CHANNEL_ID";
+    public String WebHookURL = "WEBHOOK_URL";
+    public String DiscordGameStatus = "Minecraft";
+    public String CmdCommand = "!cmd";
+    public Boolean ServerStartupMessageEnabled = true;
+    public String ServerStartupMessage = "**Server has started**";
+    public Boolean ServerShutdownMessageEnabled = true;
+    public String ServerShutdownMessage = "**Server has stopped**";
+    public Boolean ChannelListCommandEnabled = true;
+    public String ListCommand = "playerlist";
+    public String ListCommandFormatOnlinePlayersCount = "Online players (%playercount%):";
+    public String ListCommandFormatNoOnlinePlayers = "**No online players**";
+    public Boolean MinecraftPlayerJoinMessageEnabled =  true;
+    public String MinecraftPlayerJoinMessageFormat = "**%displayname% joined the server**";
+    public Boolean MinecraftPlayerLeaveMessageEnabled = true;
+    public String MinecraftPlayerLeaveMessageFormat = "**%displayname% left the server**";
+    public Boolean MinecraftPlayerDeathMessageEnabled = true;
+    public String MinecraftPlayerDeathMessageFormat = "**%deathmessage%**";
+    public Boolean MinecraftPlayerAchievementMessagesEnabled = true;
+    public String MinecraftPlayerAchievementMessagesFormat = "**%displayname% earned achievement %achievement%!**";
+    public List<String> Admins = new ArrayList<>();
+}

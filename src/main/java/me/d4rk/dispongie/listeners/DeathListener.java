@@ -1,5 +1,6 @@
-package me.d4rk.dispongie;
+package me.d4rk.dispongie.listeners;
 
+import me.d4rk.dispongie.Dispongie;
 import net.dv8tion.jda.core.JDA;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -10,7 +11,7 @@ public class DeathListener {
     JDA jda;
     String channel_id;
 
-    DeathListener(JDA gee, String chid) {
+    public DeathListener(JDA gee, String chid) {
         jda = gee;
         channel_id = chid;
     }
@@ -18,7 +19,8 @@ public class DeathListener {
     @Listener
     public void onPlayerDeath(DestructEntityEvent.Death event) {
         if (event.getTargetEntity() instanceof Player) {
-            jda.getTextChannelById(channel_id).sendMessage("**"+event.getMessage().toPlain()+"**").queue();
+            if(Dispongie.config.MinecraftPlayerDeathMessageEnabled)
+                jda.getTextChannelById(channel_id).sendMessage(Dispongie.config.MinecraftPlayerDeathMessageFormat.replace("%deathmessage%",event.getMessage().toPlain())).queue();
         }
     }
 

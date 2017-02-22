@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
 import me.d4rk.dispongie.data.Config;
+import me.d4rk.dispongie.data.WhitelistLink;
 import me.d4rk.dispongie.listeners.*;
 import me.d4rk.dispongie.utils.IOHelper;
 import net.dv8tion.jda.core.AccountType;
@@ -25,13 +26,9 @@ import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.plugin.Plugin;
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import me.d4rk.dispongie.listeners.*;
 
 @Plugin(id = "dispongie", name = "Dispongie", version = "1.0")
 public class Dispongie {
@@ -43,6 +40,7 @@ public class Dispongie {
 
     public static final Gson JSON = new GsonBuilder().setPrettyPrinting().create();
     public static Config config = new Config();
+    public static WhitelistLink whitelistLink = new WhitelistLink();
 
 
     private final Logger logger;
@@ -91,6 +89,9 @@ public class Dispongie {
             webhook = null;
             getLogger().info("Webhook disabled! Exception found.");
         }
+        if(config.DiscordWhitelistSystem){
+            Manager.loadWhitelist();
+        }
     }
 
     @Listener
@@ -133,6 +134,7 @@ public class Dispongie {
 
     @Listener
     public void onServerStop(GameStoppedServerEvent event) {
+        Manager.saveWhitelist();
         if(config.ServerShutdownMessageEnabled)
             jda.getTextChannelById(channel_id).sendMessage(config.ServerShutdownMessage).queue();
 

@@ -18,6 +18,8 @@ public class AchievementListener {
     @Listener
     public void onPlayerGrantAchievement(GrantAchievementEvent event) {
         if(Dispongie.config.MinecraftPlayerAchievementMessagesEnabled)
-            jda.getTextChannelById(channel_id).sendMessage(Dispongie.config.MinecraftPlayerAchievementMessagesFormat.replace("%displayname%",event.getCause().first(Player.class).get().getName()).replace("%achievement%",event.getAchievement().getName())).queue();
+            if(!event.getCause().first(Player.class).get().getAchievementData().achievements().contains(event.getAchievement()))
+                jda.getTextChannelById(channel_id).sendMessage(Dispongie.config.MinecraftPlayerAchievementMessagesFormat.replace("%displayname%",event.getCause().first(Player.class).get().getName()).replace("%achievement%",event.getAchievement().getName())).queue();
     }
+
 }

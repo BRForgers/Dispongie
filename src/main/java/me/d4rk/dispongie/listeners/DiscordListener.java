@@ -1,10 +1,11 @@
 package me.d4rk.dispongie.listeners;
 
 import me.d4rk.dispongie.Dispongie;
+import me.d4rk.dispongie.Manager;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -41,8 +42,29 @@ public class DiscordListener extends ListenerAdapter {
                     event.getChannel().sendMessage(playerlistMessage).queue();
                 }
             }
-            else if(Dispongie.config.Admins.contains(event.getAuthor().getId()) && !Dispongie.config.CmdCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.CmdCommand)){
-                CommandResult singlecmd = Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), event.getMessage().getRawContent().replace(Dispongie.config.CmdCommand,"").trim());
+            else if(Dispongie.config.DiscordAdminsIds.contains(event.getAuthor().getId()) && !Dispongie.config.CmdCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.CmdCommand)){
+                Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), event.getMessage().getRawContent().replace(Dispongie.config.CmdCommand,"").trim());
+            }
+            else if(Dispongie.config.DiscordWhitelistSystem && !Dispongie.config.DiscordWhitelistCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.DiscordWhitelistCommand)){
+                String playernick = event.getMessage().getRawContent().replace(Dispongie.config.DiscordWhitelistCommand,"").trim();
+                if(!playernick.isEmpty()){
+                    if(Dispongie.whitelistLink.Link.containsKey(event.getAuthor().getId())){
+                        String old = Dispongie.whitelistLink.Link.get(event.getAuthor().getId());
+                        Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), "kick " + old + " " + Dispongie.config.WhitelistRemovedMsg);
+                        Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), "whitelist remove " + old);
+                        Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), "whitelist add " + playernick);
+                        Dispongie.whitelistLink.Link.put(event.getAuthor().getId(),playernick);
+                        event.getChannel().sendMessage(Dispongie.config.WhitelistReplaceMsg.replace("%oldnick%", old).replace("%newnick%", playernick)).queue();
+                    }else{
+                        Dispongie.whitelistLink.Link.put(event.getAuthor().getId(), playernick);
+                        Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), "whitelist add " + playernick);
+                        event.getChannel().sendMessage(Dispongie.config.WhitelistAddMsg.replace("%nick%", playernick)).queue();
+                    }
+                    Manager.saveWhitelist();
+                }
+                else {
+                    event.getChannel().sendMessage(Dispongie.config.WhitelistCmdError).queue();
+                }
             }
             else {
                 Text discord = Text.builder("[Discord]").color(TextColors.BLUE).append(
@@ -52,4 +74,21 @@ public class DiscordListener extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onGuildMemberLeave(GuildMemberLeaveEvent event){
+        if (Dispongie.config.DiscordWhitelistSystem) {
+            if (Dispongie.whitelistLink.Link.containsKey(event.getMember().getUser().getId())) {
+                Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), "whitelist remove " + Dispongie.whitelistLink.Link.get(event.getMember().getUser().getId()));
+                Dispongie.whitelistLink.Link.remove(event.getMember().getUser().getId());
+                Manager.saveWhitelist();
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void debug(String msg){
+        Text discord = Text.builder("[DEBUG]").color(TextColors.RED).append(
+                Text.builder(msg).color(TextColors.WHITE).build()).build();
+        Sponge.getServer().getBroadcastChannel().send(discord.trim());
+    }
 }

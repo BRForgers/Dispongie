@@ -25,5 +25,11 @@ public class Config {
     public String MinecraftPlayerDeathMessageFormat = "**%deathmessage%**";
     public Boolean MinecraftPlayerAchievementMessagesEnabled = true;
     public String MinecraftPlayerAchievementMessagesFormat = "**%displayname% earned achievement %achievement%!**";
-    public List<String> Admins = new ArrayList<>();
+    public List<String> DiscordAdminsIds = new ArrayList<>();
+    public Boolean DiscordWhitelistSystem = false;
+    public String DiscordWhitelistCommand = "!whitelist";
+    public String WhitelistRemovedMsg = "You have been removed from the whitelist.";
+    public String WhitelistReplaceMsg = "Successfully changed IGN of **%oldnick%** to **%newnick%**!";
+    public String WhitelistAddMsg = "Successfully added **%nick%** to whitelist!";
+    public String WhitelistCmdError = "Use: !whitelist *nick*";
 }

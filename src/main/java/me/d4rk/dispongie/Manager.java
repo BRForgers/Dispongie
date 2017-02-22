@@ -1,7 +1,7 @@
 package me.d4rk.dispongie;
 
 import me.d4rk.dispongie.data.Config;
-import org.slf4j.Logger;
+import me.d4rk.dispongie.data.WhitelistLink;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -14,6 +14,7 @@ public class Manager {
     private static Dispongie plugin = Dispongie.getInstance();
 
     public static Config config;
+    public static WhitelistLink whitelistLink;
 
     public static Path getSaveFile(String nome) {
         String location = plugin.privateConfigDir.toString() + File.separator;
@@ -50,4 +51,27 @@ public class Manager {
             throw new RuntimeException(e);
         }
     }
+    public static void loadWhitelist() {
+        try {
+            whitelistLink = Dispongie.JSON.fromJson(new String(Files.readAllBytes(getSaveFile("whitelistlink")), Charset.forName("UTF-8")), WhitelistLink.class);
+            plugin.getLogger().info("whitelistLink loaded!");
+        } catch (Exception e) {
+            whitelistLink = new WhitelistLink();
+            saveWhitelist();
+            plugin.getLogger().warn("Creating whitelistLink!");
+        }
+        Dispongie.whitelistLink = whitelistLink;
+    }
+    public static void saveWhitelist() {
+        whitelistLink = new WhitelistLink();
+        whitelistLink = Dispongie.whitelistLink;
+        try {
+            Files.write(getSaveFile("whitelistlink"), Dispongie.JSON.toJson(whitelistLink).getBytes(Charset.forName("UTF-8")));
+            plugin.getLogger().info("whitelistLink saved!");
+        } catch (Exception e) {
+            plugin.getLogger().warn("Failed to save whitelistLink!");
+            throw new RuntimeException(e);
+        }
+    }
+
 }

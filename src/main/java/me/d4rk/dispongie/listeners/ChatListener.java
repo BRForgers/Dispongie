@@ -1,6 +1,5 @@
 package me.d4rk.dispongie.listeners;
 
-import com.mashape.unirest.http.Unirest;
 import me.d4rk.dispongie.Dispongie;
 import net.dv8tion.jda.core.JDA;
 import org.apache.http.HttpResponse;
@@ -10,7 +9,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.message.MessageChannelEvent;

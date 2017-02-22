@@ -95,11 +95,6 @@ public class Dispongie {
     }
 
     @Listener
-    public void onLoad(GameLoadCompleteEvent event) {
-        logger.info("Armelin is topper!");
-    }
-
-    @Listener
     public void onServerStart(GameStartedServerEvent event) {
 
         JDAImpl.LOG.setLevel(SimpleLog.Level.OFF);

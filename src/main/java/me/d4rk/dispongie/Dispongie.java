@@ -3,9 +3,12 @@ package me.d4rk.dispongie;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
+import me.d4rk.dispongie.commands.Shrug;
+import me.d4rk.dispongie.commands.discordConfig;
 import me.d4rk.dispongie.data.Config;
 import me.d4rk.dispongie.data.WhitelistLink;
 import me.d4rk.dispongie.listeners.*;
+import me.d4rk.dispongie.threads.ChannelTopicUpdater;
 import me.d4rk.dispongie.utils.IOHelper;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -20,10 +23,13 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.text.Text;
+
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
@@ -42,17 +48,29 @@ public class Dispongie {
     public static Config config = new Config();
     public static WhitelistLink whitelistLink = new WhitelistLink();
 
+    public static ChannelTopicUpdater channelTopicUpdater;
 
     private final Logger logger;
     private final Game game;
 
-    JDA jda;
+    public static final long startTime = System.nanoTime();
+
+    public static JDA jda;
     String channel_id = "ID DO CANAL";
     String bot_token = "TOKEN DO BOT";
     String webhook = "LINK DO WEBHOOK";
     public static Channel channel = null;
 
+    CommandSpec ShrugSpec = CommandSpec.builder()
+            .description(Text.of("Shrug"))
+            .executor(new Shrug())
+            .build();
 
+    CommandSpec discordConfigSpec = CommandSpec.builder()
+            .description(Text.of("Fix config."))
+            .permission("admin")
+            .executor(new discordConfig())
+            .build();
 
     @Inject @ConfigDir(sharedRoot = false)
     File privateConfigDir;
@@ -95,6 +113,11 @@ public class Dispongie {
     }
 
     @Listener
+    public void onLoad(GameLoadCompleteEvent event) {
+        logger.info("Armelin is topper!");
+    }
+
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
 
         JDAImpl.LOG.setLevel(SimpleLog.Level.OFF);
@@ -117,11 +140,17 @@ public class Dispongie {
         }
 
         channel = jda.getTextChannelById(channel_id);
-
+        Sponge.getCommandManager().register(this, ShrugSpec, "shrug");
+        Sponge.getCommandManager().register(this, discordConfigSpec, "discordConfig");
         Sponge.getEventManager().registerListeners(this, new ChatListener(webhook, jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new DeathListener(jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new ConnectionListener(jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new AchievementListener(jda, channel_id));
+
+        if (channelTopicUpdater == null) {
+            channelTopicUpdater = new ChannelTopicUpdater();
+            channelTopicUpdater.start();
+        }
 
         if(config.ServerStartupMessageEnabled)
             jda.getTextChannelById(channel_id).sendMessage(config.ServerStartupMessage).queue();
@@ -130,8 +159,20 @@ public class Dispongie {
     @Listener
     public void onServerStop(GameStoppedServerEvent event) {
         Manager.saveWhitelist();
+
+        if (channelTopicUpdater != null) {
+            channelTopicUpdater.interrupt();
+            channelTopicUpdater = null;
+        }
+
         if(config.ServerShutdownMessageEnabled)
             jda.getTextChannelById(channel_id).sendMessage(config.ServerShutdownMessage).queue();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            //e.printStackTrace();
+        }
 
         jda.shutdown();
 

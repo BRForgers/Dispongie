@@ -32,4 +32,6 @@ public class Config {
     public String WhitelistReplaceMsg = "Successfully changed IGN of **%oldnick%** to **%newnick%**!";
     public String WhitelistAddMsg = "Successfully added **%nick%** to whitelist!";
     public String WhitelistCmdError = "Use: !whitelist *nick*";
+    public String ChannelTopicUpdaterFormat = "TPS: %tps% | Mem: %usedmemorygb%GB used/%freememorygb%GB free/%maxmemorygb%GB max | %playercount%/%playermax% players online | Server online for %uptimemins% minutes | Last update: %date%";
+    public int ChannelTopicUpdaterRateInSeconds = 5;
 }

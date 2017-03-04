@@ -68,7 +68,7 @@ public class DiscordListener extends ListenerAdapter {
             }
             else {
                 Text discord = Text.builder("[Discord]").color(TextColors.BLUE).append(
-                        Text.builder(" <" + event.getAuthor().getName() + "> " + event.getMessage().getRawContent()+((event.getMessage().getAttachments().size() > 0)?" <att>":"")).color(TextColors.WHITE).build()).build();
+                        Text.builder(" <" + event.getAuthor().getName() + "> " + event.getMessage().getContent()+((event.getMessage().getAttachments().size() > 0)?" <att>":"")+((event.getMessage().getEmbeds().size() > 0)?" <embed>":"")).color(TextColors.WHITE).build()).build();
                 Sponge.getServer().getBroadcastChannel().send(discord.trim());
             }
         }

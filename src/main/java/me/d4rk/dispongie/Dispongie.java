@@ -3,6 +3,7 @@ package me.d4rk.dispongie;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.inject.Inject;
+import me.d4rk.dispongie.commands.Lenny;
 import me.d4rk.dispongie.commands.Shrug;
 import me.d4rk.dispongie.commands.discordConfig;
 import me.d4rk.dispongie.data.Config;
@@ -64,6 +65,11 @@ public class Dispongie {
     CommandSpec ShrugSpec = CommandSpec.builder()
             .description(Text.of("Shrug"))
             .executor(new Shrug())
+            .build();
+
+    CommandSpec LennySpec = CommandSpec.builder()
+            .description(Text.of("Lenny"))
+            .executor(new Lenny())
             .build();
 
     CommandSpec discordConfigSpec = CommandSpec.builder()
@@ -142,6 +148,7 @@ public class Dispongie {
         channel = jda.getTextChannelById(channel_id);
         Sponge.getCommandManager().register(this, ShrugSpec, "shrug");
         Sponge.getCommandManager().register(this, discordConfigSpec, "discordConfig");
+        Sponge.getCommandManager().register(this, LennySpec,"lenny");
         Sponge.getEventManager().registerListeners(this, new ChatListener(webhook, jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new DeathListener(jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new ConnectionListener(jda, channel_id));

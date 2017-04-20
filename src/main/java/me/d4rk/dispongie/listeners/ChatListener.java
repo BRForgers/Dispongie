@@ -41,7 +41,7 @@ public class ChatListener {
                     post.setHeader("Charset","UTF-8");
                     List<NameValuePair> nameValuePairs = new ArrayList<>();
                     nameValuePairs.add(new BasicNameValuePair("content", Dispongie.convertMentionsFromNames(event.getRawMessage().toPlain())));
-                    nameValuePairs.add(new BasicNameValuePair("username", event.getCause().first(Player.class).get().getName()));
+                    nameValuePairs.add(new BasicNameValuePair("username", event.getCause().first(Player.class).isPresent() ? event.getCause().first(Player.class).get().getName() : "Server") );
                     nameValuePairs.add(new BasicNameValuePair("avatar_url", "https://crafatar.com/avatars/"+ event.getCause().first(Player.class).get().getIdentifier()+ "?overlay=true"));
                     UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
                     post.setEntity(urlEncodedFormEntity);

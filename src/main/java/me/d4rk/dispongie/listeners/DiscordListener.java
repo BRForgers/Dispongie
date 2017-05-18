@@ -2,15 +2,25 @@ package me.d4rk.dispongie.listeners;
 
 import me.d4rk.dispongie.Dispongie;
 import me.d4rk.dispongie.Manager;
+import me.d4rk.dispongie.utils.DiscordSource;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.permission.Subject;
+import org.spongepowered.api.service.permission.SubjectCollection;
+import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.channel.MessageChannel;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.Tristate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class DiscordListener extends ListenerAdapter {
 
@@ -43,7 +53,7 @@ public class DiscordListener extends ListenerAdapter {
                 }
             }
             else if(Dispongie.config.DiscordAdminsIds.contains(event.getAuthor().getId()) && !Dispongie.config.CmdCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.CmdCommand)){
-                Dispongie.getInstance().getGame().getCommandManager().process(Dispongie.getInstance().getGame().getServer().getConsole(), event.getMessage().getRawContent().replace(Dispongie.config.CmdCommand,"").trim());
+                Dispongie.getInstance().getGame().getCommandManager().process(new DiscordSource(Dispongie.getInstance().getGame().getServer().getConsole(),event), event.getMessage().getRawContent().replace(Dispongie.config.CmdCommand, "").trim());
             }
             else if(Dispongie.config.DiscordWhitelistSystem && !Dispongie.config.DiscordWhitelistCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.DiscordWhitelistCommand)){
                 String playernick = event.getMessage().getRawContent().replace(Dispongie.config.DiscordWhitelistCommand,"").trim();

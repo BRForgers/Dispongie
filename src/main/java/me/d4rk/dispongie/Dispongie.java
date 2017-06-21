@@ -132,7 +132,7 @@ public class Dispongie {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(bot_token)
                     .setGame((!config.DiscordGameStatus.isEmpty())?net.dv8tion.jda.core.entities.Game.of(config.DiscordGameStatus):null)
-                    .addListener(new DiscordListener(channel_id))
+                    .addEventListener(new DiscordListener(channel_id))
                     .buildBlocking();
         }
         catch (LoginException e) {

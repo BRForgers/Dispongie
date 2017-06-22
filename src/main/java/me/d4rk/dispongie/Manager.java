@@ -17,6 +17,10 @@ public class Manager {
     public static WhitelistLink whitelistLink;
 
     public static Path getSaveFile(String nome) {
+        File folder = new File(plugin.privateConfigDir.toString());
+        if(!folder.exists()){
+            folder.mkdir();
+        }
         String location = plugin.privateConfigDir.toString() + File.separator;
         plugin.getLogger().debug(location);
         return getPath(location + nome);

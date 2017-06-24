@@ -15,6 +15,8 @@ import org.spongepowered.api.util.Tristate;
 
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class DiscordSource implements ProxySource {
 
     private final CommandSource src;
@@ -34,21 +36,32 @@ public class DiscordSource implements ProxySource {
 
     @Override
     public void sendMessage(TextTemplate template) {
+        this.sendMessage(checkNotNull(template, "template").apply().build());
         this.src.sendMessage(template);
     }
 
     @Override
     public void sendMessage(TextTemplate template, Map<String, TextElement> parameters) {
+        this.sendMessage(checkNotNull(template, "template").apply(parameters).build());
         this.src.sendMessage(template,parameters);
+
     }
 
     @Override
     public void sendMessages(Iterable<Text> messages) {
+        for (Text message : checkNotNull(messages, "messages")) {
+            this.sendMessage(message);
+        }
         this.src.sendMessages(messages);
     }
 
     @Override
     public void sendMessages(Text... messages) {
+        checkNotNull(messages, "messages");
+
+        for (Text message : messages) {
+            this.sendMessage(message);
+        }
         this.src.sendMessages(messages);
     }
 

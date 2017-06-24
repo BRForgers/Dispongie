@@ -18,9 +18,8 @@ public class Hastebin {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost("https://hastebin.com/documents");
         try {
-            post.setHeader("Charset","UTF-8");
             post.setHeaders(new Header[] { new BasicHeader("Charset","UTF-8"), new BasicHeader("Content-Type", "text/plain")});
-            post.setEntity(new StringEntity(toSend));
+            post.setEntity(new StringEntity(toSend,"UTF-8"));
             HttpResponse response = httpClient.execute(post);
             JSONObject o = new JSONObject(EntityUtils.toString(response.getEntity()));
             return "https://hastebin.com/" + o.getString("key");

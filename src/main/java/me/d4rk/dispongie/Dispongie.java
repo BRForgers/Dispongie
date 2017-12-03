@@ -152,7 +152,7 @@ public class Dispongie {
         Sponge.getEventManager().registerListeners(this, new ChatListener(webhook, jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new DeathListener(jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new ConnectionListener(jda, channel_id));
-        Sponge.getEventManager().registerListeners(this, new AchievementListener(jda, channel_id));
+        //Sponge.getEventManager().registerListeners(this, new AchievementListener(jda, channel_id));
 
         if (channelTopicUpdater == null) {
             channelTopicUpdater = new ChannelTopicUpdater();

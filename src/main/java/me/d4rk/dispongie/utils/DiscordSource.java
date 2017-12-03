@@ -4,9 +4,9 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ProxySource;
 import org.spongepowered.api.service.context.Context;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.service.permission.SubjectCollection;
 import org.spongepowered.api.service.permission.SubjectData;
+import org.spongepowered.api.service.permission.SubjectReference;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextElement;
 import org.spongepowered.api.text.TextTemplate;
@@ -96,6 +96,16 @@ public class DiscordSource implements ProxySource {
     }
 
     @Override
+    public SubjectReference asSubjectReference() {
+        return this.src.asSubjectReference();
+    }
+
+    @Override
+    public boolean isSubjectDataPersisted() {
+        return this.src.isSubjectDataPersisted();
+    }
+
+    @Override
     public SubjectData getSubjectData() {
         return this.src.getSubjectData();
     }
@@ -121,23 +131,13 @@ public class DiscordSource implements ProxySource {
     }
 
     @Override
-    public boolean isChildOf(Subject parent) {
+    public boolean isChildOf(SubjectReference parent) {
         return this.src.isChildOf(parent);
     }
 
     @Override
-    public boolean isChildOf(Set<Context> contexts, Subject parent) {
-        return this.src.isChildOf(contexts, parent);
-    }
-
-    @Override
-    public List<Subject> getParents() {
-        return this.src.getParents();
-    }
-
-    @Override
-    public List<Subject> getParents(Set<Context> contexts) {
-        return this.src.getParents(contexts);
+    public boolean isChildOf(Set<Context> contexts, SubjectReference parent) {
+        return this.src.isChildOf(contexts,parent);
     }
 
     @Override
@@ -156,6 +156,11 @@ public class DiscordSource implements ProxySource {
     }
 
     @Override
+    public Optional<String> getFriendlyIdentifier() {
+        return this.src.getFriendlyIdentifier();
+    }
+
+    @Override
     public Set<Context> getActiveContexts() {
         return this.src.getActiveContexts();
     }
@@ -163,5 +168,15 @@ public class DiscordSource implements ProxySource {
     @Override
     public CommandSource getOriginalSource() {
         return this.src;
+    }
+
+    @Override
+    public List<SubjectReference> getParents() {
+        return this.src.getParents();
+    }
+
+    @Override
+    public List<SubjectReference> getParents(Set<Context> contexts) {
+        return this.src.getParents(contexts);
     }
 }

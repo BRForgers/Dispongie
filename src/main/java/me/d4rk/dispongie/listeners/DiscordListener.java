@@ -25,7 +25,7 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor() != event.getJDA().getSelfUser() && !event.getAuthor().isFake() && event.getTextChannel().getId().equals(channel_id) ) {
-            if(event.getMessage().getRawContent().startsWith(Dispongie.config.ListCommand) && Dispongie.config.ChannelListCommandEnabled){
+            if(event.getMessage().getContentRaw().startsWith(Dispongie.config.ListCommand) && Dispongie.config.ChannelListCommandEnabled){
                 if (Sponge.getServer().getOnlinePlayers().size() == 0) {
                     event.getChannel().sendMessage(Dispongie.config.ListCommandFormatNoOnlinePlayers).queue();
                 }else {
@@ -44,11 +44,11 @@ public class DiscordListener extends ListenerAdapter {
                     event.getChannel().sendMessage(playerlistMessage).queue();
                 }
             }
-            else if(Dispongie.config.DiscordAdminsIds.contains(event.getAuthor().getId()) && !Dispongie.config.CmdCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.CmdCommand)){
-                Dispongie.getInstance().getGame().getCommandManager().process(new DiscordSource(Dispongie.getInstance().getGame().getServer().getConsole(),event), event.getMessage().getRawContent().replace(Dispongie.config.CmdCommand, "").trim());
+            else if(Dispongie.config.DiscordAdminsIds.contains(event.getAuthor().getId()) && !Dispongie.config.CmdCommand.isEmpty() && event.getMessage().getContentRaw().startsWith(Dispongie.config.CmdCommand)){
+                Dispongie.getInstance().getGame().getCommandManager().process(new DiscordSource(Dispongie.getInstance().getGame().getServer().getConsole(),event), event.getMessage().getContentRaw().replace(Dispongie.config.CmdCommand, "").trim());
             }
-            else if(Dispongie.config.DiscordWhitelistSystem && !Dispongie.config.DiscordWhitelistCommand.isEmpty() && event.getMessage().getRawContent().startsWith(Dispongie.config.DiscordWhitelistCommand)){
-                String playernick = event.getMessage().getRawContent().replace(Dispongie.config.DiscordWhitelistCommand,"").trim();
+            else if(Dispongie.config.DiscordWhitelistSystem && !Dispongie.config.DiscordWhitelistCommand.isEmpty() && event.getMessage().getContentRaw().startsWith(Dispongie.config.DiscordWhitelistCommand)){
+                String playernick = event.getMessage().getContentRaw().replace(Dispongie.config.DiscordWhitelistCommand,"").trim();
                 if(!playernick.isEmpty()){
                     if(Dispongie.whitelistLink.Link.containsKey(event.getAuthor().getId())){
                         String old = Dispongie.whitelistLink.Link.get(event.getAuthor().getId());
@@ -70,7 +70,7 @@ public class DiscordListener extends ListenerAdapter {
             }
             else {
                 Text discord = Text.builder("[Discord]").color(TextColors.BLUE).append(
-                        Text.builder(" <" + event.getAuthor().getName() + "> " + event.getMessage().getContent()+((event.getMessage().getAttachments().size() > 0)?" <att>":"")+((event.getMessage().getEmbeds().size() > 0)?" <embed>":"")).color(TextColors.WHITE).build()).build();
+                        Text.builder(" <" + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()+((event.getMessage().getAttachments().size() > 0)?" <att>":"")+((event.getMessage().getEmbeds().size() > 0)?" <embed>":"")).color(TextColors.WHITE).build()).build();
                 Sponge.getServer().getBroadcastChannel().send(discord.trim());
             }
         }

@@ -16,9 +16,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.impl.JDAImpl;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import net.dv8tion.jda.core.utils.SimpleLog;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
@@ -31,7 +28,6 @@ import org.spongepowered.api.event.game.state.*;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,22 +122,15 @@ public class Dispongie {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
 
-        JDAImpl.LOG.setLevel(SimpleLog.Level.OFF);
         //game.getCommandManager().process(game.getServer().getConsole(), "command string");
         try {
             jda = new JDABuilder(AccountType.BOT)
                     .setToken(bot_token)
-                    .setGame((!config.DiscordGameStatus.isEmpty())?net.dv8tion.jda.core.entities.Game.of(config.DiscordGameStatus):null)
+                    .setGame((!config.DiscordGameStatus.isEmpty())?net.dv8tion.jda.core.entities.Game.of(net.dv8tion.jda.core.entities.Game.GameType.DEFAULT, config.DiscordGameStatus):null)
                     .addEventListener(new DiscordListener(channel_id))
                     .buildBlocking();
         }
-        catch (LoginException e) {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        catch (RateLimitedException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -152,7 +141,7 @@ public class Dispongie {
         Sponge.getEventManager().registerListeners(this, new ChatListener(webhook, jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new DeathListener(jda, channel_id));
         Sponge.getEventManager().registerListeners(this, new ConnectionListener(jda, channel_id));
-        //Sponge.getEventManager().registerListeners(this, new AchievementListener(jda, channel_id));
+        Sponge.getEventManager().registerListeners(this, new AdvancementListener(jda, channel_id));
 
         if (channelTopicUpdater == null) {
             channelTopicUpdater = new ChannelTopicUpdater();
